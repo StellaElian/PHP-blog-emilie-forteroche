@@ -9,7 +9,7 @@ class ArticleManager extends AbstractEntityManager
      * Récupère tous les articles.
      * @return array : un tableau d'objets Article.
      */
-    public function getAllArticles() : array
+    public function getAllArticles(): array
     {
         $sql = "SELECT * FROM article";
         $result = $this->db->query($sql);
@@ -20,13 +20,13 @@ class ArticleManager extends AbstractEntityManager
         }
         return $articles;
     }
-    
+
     /**
      * Récupère un article par son id.
      * @param int $id : l'id de l'article.
      * @return Article|null : un objet Article ou null si l'article n'existe pas.
      */
-    public function getArticleById(int $id) : ?Article
+    public function getArticleById(int $id): ?Article
     {
         $sql = "SELECT * FROM article WHERE id = :id";
         $result = $this->db->query($sql, ['id' => $id]);
@@ -41,9 +41,8 @@ class ArticleManager extends AbstractEntityManager
      * Ajoute ou modifie un article.
      * On sait si l'article est un nouvel article car son id sera -1.
      * @param Article $article : l'article à ajouter ou modifier.
-     * @return void
      */
-    public function addOrUpdateArticle(Article $article) : void 
+    public function addOrUpdateArticle(Article $article): void 
     {
         if ($article->getId() == -1) {
             $this->addArticle($article);
@@ -54,12 +53,11 @@ class ArticleManager extends AbstractEntityManager
 
     /**
      * Ajoute un article.
-     * @param Article $article : l'article à ajouter.
-     * @return void
      */
-    public function addArticle(Article $article) : void
+    public function addArticle(Article $article): void
     {
-        $sql = "INSERT INTO article (id_user, title, content, date_creation) VALUES (:id_user, :title, :content, NOW())";
+        $sql = "INSERT INTO article (id_user, title, content, date_creation) 
+                VALUES (:id_user, :title, :content, NOW())";
         $this->db->query($sql, [
             'id_user' => $article->getIdUser(),
             'title' => $article->getTitle(),
@@ -69,10 +67,8 @@ class ArticleManager extends AbstractEntityManager
 
     /**
      * Modifie un article.
-     * @param Article $article : l'article à modifier.
-     * @return void
      */
-    public function updateArticle(Article $article) : void
+    public function updateArticle(Article $article): void
     {
         $sql = "UPDATE article SET title = :title, content = :content, date_update = NOW() WHERE id = :id";
         $this->db->query($sql, [
@@ -84,12 +80,48 @@ class ArticleManager extends AbstractEntityManager
 
     /**
      * Supprime un article.
-     * @param int $id : l'id de l'article à supprimer.
-     * @return void
      */
-    public function deleteArticle(int $id) : void
+    public function deleteArticle(int $id): void
     {
         $sql = "DELETE FROM article WHERE id = :id";
         $this->db->query($sql, ['id' => $id]);
+    }
+
+    /**
+     * Incrémente le nombre de vues d'un article.
+     */
+    public function incrementViews(int $id): void
+    {
+        $sql = "UPDATE article SET views = views + 1 WHERE id = :id";
+        $this->db->query($sql, ['id' => $id]);
+    }
+
+    /**
+     * Récupère tous les articles avec le nombre de commentaires.
+     * Cette méthode est utilisée pour la page monitoring.
+     */
+    public function getArticlesWithStats(): array
+    {
+        $sql = "
+            SELECT 
+                a.id,
+                a.title,
+                a.date_creation AS created_at,  -- correspond à ta colonne réelle
+                a.views,
+                COUNT(c.id) AS nb_comments
+            FROM article a
+            LEFT JOIN comment c ON c.id_article = a.id  
+            GROUP BY a.id
+            ORDER BY a.id ASC
+        ";
+
+        $result = $this->db->query($sql);
+
+        $articles = [];
+        while ($row = $result->fetch()) {
+            $articles[] = $row;
+        }
+
+        return $articles;
     }
 }

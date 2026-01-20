@@ -4,13 +4,17 @@
  * Entité Article, un article est défini par les champs
  * id, id_user, title, content, date_creation, date_update
  */
+
+// private view +getter + setter wzzh
  class Article extends AbstractEntity 
  {
+    
     private int $idUser;
     private string $title = "";
     private string $content = "";
     private ?DateTime $dateCreation = null;
     private ?DateTime $dateUpdate = null;  
+    private int $views ; 
 
     /**
      * Setter pour l'id de l'utilisateur. 
@@ -127,4 +131,18 @@
     {
         return $this->dateUpdate;
     }
- }
+
+    // Getter pour le nobre de vue 
+    public function getViews() : int 
+    {
+        return $this->views;
+    }
+
+    // Setter du nombre de vues 
+    public function setViews(int $views) : void 
+    {
+        $this->views = $views;
+    }
+    
+
+    }

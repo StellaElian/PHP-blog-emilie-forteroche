@@ -3,8 +3,17 @@
      * Ce template affiche un article et ses commentaires.
      * Il affiche également un formulaire pour ajouter un commentaire.
      */
+    // Pour afficher le nombre de vues dans la vue, pas demandé mais je l'ai fais 
 ?>
+<h1><?= $article->getTitle() ?></h1>
 
+<p class="views">
+    👁️ <?= $article->getViews() ?> vue<?= $article->getViews() > 1 ? 's' : '' ?>
+</p>
+
+<p>
+    <?= nl2br(htmlspecialchars($article->getContent())) ?>
+</p>
 <article class="mainArticle">
     <h2> <?= Utils::format($article->getTitle()) ?> </h2>
     <span class="quotation">«</span>

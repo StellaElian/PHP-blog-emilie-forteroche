@@ -2,6 +2,7 @@
 
 require_once 'config/config.php';
 require_once 'config/autoload.php';
+require_once 'controllers/AdminController.php';
 
 // On récupère l'action demandée par l'utilisateur.
 // Si aucune action n'est demandée, on affiche la page d'accueil.
@@ -72,6 +73,11 @@ try {
         case 'deleteArticle':
             $adminController = new AdminController();
             $adminController->deleteArticle();
+            break;
+
+        case 'monitoring':
+            $adminController = new AdminController();
+            $adminController->monitoring();
             break;
 
         default:

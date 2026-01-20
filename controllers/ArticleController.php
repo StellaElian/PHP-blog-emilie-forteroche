@@ -21,10 +21,16 @@ class ArticleController
      */
     public function showArticle() : void
     {
+        
         // Récupération de l'id de l'article demandé.
         $id = Utils::request("id", -1);
 
         $articleManager = new ArticleManager();
+
+        // Incrémentation du compteur de vues avant de récupérer l'article 
+        $articleManager->incrementViews($id);
+
+        // $articleManager->getArticleById(); récupere l'article mise à jour avec la nouvelle valeur de vues 
         $article = $articleManager->getArticleById($id);
         
         if (!$article) {
@@ -36,6 +42,11 @@ class ArticleController
 
         $view = new View($article->getTitle());
         $view->render("detailArticle", ['article' => $article, 'comments' => $comments]);
+        
+        if ($id <= 0)
+        {
+            throw new Exception("ID d'article invalide.");
+        }
     }
 
     /**
@@ -56,4 +67,8 @@ class ArticleController
         $view = new View("A propos");
         $view->render("apropos");
     }
+
+    // 
+
+
 }

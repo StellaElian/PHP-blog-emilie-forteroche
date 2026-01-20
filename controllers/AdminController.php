@@ -176,4 +176,64 @@ class AdminController {
         // On redirige vers la page d'administration.
         Utils::redirect("admin");
     }
+
+    public function monitoring()
+    {
+       
+
+        // Vérifier que l'utilisateur est connecté 
+        $this->checkIfUserIsConnected();
+
+        //Appelle modèle Article
+        // Récupération de sort et order : si on clique-> on recupere ce qu'on veut sinon on trie par date, du plus récent au plus ancien
+        $sort = $_GET['sort'] ?? 'created_at';
+        $order = $_GET['order'] ?? 'desc'; 
+
+        // SECURISATION des colonnes Autorisées
+        $allowedSorts = ['title', 'created_at', 'views', 'nb_comments'];
+        if (!in_array($sort, $allowedSorts))
+        {
+            $sort = 'created_at';
+        }
+
+        $order = ($order === 'asc') ? 'asc' : 'desc';
+
+        
+        $articleManager = new ArticleManager();
+        $articles = $articleManager->getArticlesWithStats();
+
+        // Trier le tableau en php, usort : compare deux articles, regarde la colonne demandée, les range dans le bon ordre 
+        usort($articles, function ($a, $b) use ($sort, $order)
+        {
+            if ($a[$sort] == $b[$sort])
+            {
+                return 0;
+            }
+            if($order === 'asc')
+            {
+                return ($a[$sort] < $b[$sort]) ? -1 : 1;
+            }else
+            {
+                return ($a[$sort] > $b[$sort]) ? -1 : 1;
+            }
+        });
+
+
+
+        // instance PDO 
+        //$pdo = new PDO("mysql:host=localhost;dbname=blog_forteroche", "root", "");
+        //$articleManager = new ArticleManager($pdo);
+        
+        //Charger la vue monitoring 
+        // render est une méthode de la classe View qui permet d'afficher une vue
+        //monitoring est un fichier php != Monitoring qui est un nom, une étiquette, comme un titre
+        $view = new View('Monitoring');
+        $view->render('monitoring', [
+            'articles' => $articles,
+            'sort' => $sort,
+            'order' => $order
+        ]);
+
+    }
+
 }
