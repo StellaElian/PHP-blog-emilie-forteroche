@@ -1,9 +1,9 @@
 <?php
-    /**
-     * Ce template affiche un article et ses commentaires.
-     * Il affiche également un formulaire pour ajouter un commentaire.
-     */
-    // Pour afficher le nombre de vues dans la vue, pas demandé mais je l'ai fais 
+/**
+ * Ce template affiche un article et ses commentaires.
+ * Il affiche également un formulaire pour ajouter un commentaire.
+ */
+// Pour afficher le nombre de vues dans la vue, pas demandé mais je l'ai fais 
 ?>
 <h1><?= $article->getTitle() ?></h1>
 
@@ -29,22 +29,22 @@
 
 <div class="comments">
     <h2 class="commentsTitle">Vos Commentaires</h2>
-    <?php 
-        if (empty($comments)) {
-            echo '<p class="info">Aucun commentaire pour cet article.</p>';
-        } else {
-            echo '<ul>';
-            foreach ($comments as $comment) {
-                echo '<li>';
-                echo '  <div class="smiley">☻</div>';
-                echo '  <div class="detailComment">';
-                echo '      <h3 class="info">Le ' . Utils::convertDateToFrenchFormat($comment->getDateCreation()) . ", " . Utils::format($comment->getPseudo()) . ' a écrit :</h3>';
-                echo '      <p class="content">' . Utils::format($comment->getContent()) . '</p>';
-                echo '  </div>';
-                echo '</li>';
-            }               
-            echo '</ul>';
-        } 
+    <?php
+    if (empty($comments)) {
+        echo '<p class="info">Aucun commentaire pour cet article.</p>';
+    } else {
+        echo '<ul>';
+        foreach ($comments as $comment) {
+            echo '<li>';
+            echo '  <div class="smiley">☻</div>';
+            echo '  <div class="detailComment">';
+            echo '      <h3 class="info">Le ' . Utils::convertDateToFrenchFormat($comment->getDateCreation()) . ", " . Utils::format($comment->getPseudo()) . ' a écrit :</h3>';
+            echo '      <p class="content">' . Utils::format($comment->getContent()) . '</p>';
+            echo '  </div>';
+            echo '</li>';
+        }
+        echo '</ul>';
+    }
     ?>
 
     <form action="index.php" method="post" class="foldedCorner">

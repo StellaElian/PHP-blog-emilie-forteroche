@@ -1,15 +1,16 @@
-<?php 
+<?php
 /**
  * Contrôleur de la partie admin.
  */
- 
-class AdminController {
+
+class AdminController
+{
 
     /**
      * Affiche la page d'administration.
      * @return void
      */
-    public function showAdmin() : void
+    public function showAdmin(): void
     {
         // On vérifie que l'utilisateur est connecté.
         $this->checkIfUserIsConnected();
@@ -29,7 +30,7 @@ class AdminController {
      * Vérifie que l'utilisateur est connecté.
      * @return void
      */
-    private function checkIfUserIsConnected() : void
+    private function checkIfUserIsConnected(): void
     {
         // On vérifie que l'utilisateur est connecté.
         if (!isset($_SESSION['user'])) {
@@ -41,7 +42,7 @@ class AdminController {
      * Affichage du formulaire de connexion.
      * @return void
      */
-    public function displayConnectionForm() : void 
+    public function displayConnectionForm(): void
     {
         $view = new View("Connexion");
         $view->render("connectionForm");
@@ -51,7 +52,7 @@ class AdminController {
      * Connexion de l'utilisateur.
      * @return void
      */
-    public function connectUser() : void 
+    public function connectUser(): void
     {
         // On récupère les données du formulaire.
         $login = Utils::request("login");
@@ -87,7 +88,7 @@ class AdminController {
      * Déconnexion de l'utilisateur.
      * @return void
      */
-    public function disconnectUser() : void 
+    public function disconnectUser(): void
     {
         // On déconnecte l'utilisateur.
         unset($_SESSION['user']);
@@ -100,7 +101,7 @@ class AdminController {
      * Affichage du formulaire d'ajout d'un article.
      * @return void
      */
-    public function showUpdateArticleForm() : void 
+    public function showUpdateArticleForm(): void
     {
         $this->checkIfUserIsConnected();
 
@@ -128,7 +129,7 @@ class AdminController {
      * On sait si un article est ajouté car l'id vaut -1.
      * @return void
      */
-    public function updateArticle() : void 
+    public function updateArticle(): void
     {
         $this->checkIfUserIsConnected();
 
@@ -163,7 +164,7 @@ class AdminController {
      * Suppression d'un article.
      * @return void
      */
-    public function deleteArticle() : void
+    public function deleteArticle(): void
     {
         $this->checkIfUserIsConnected();
 
@@ -172,58 +173,45 @@ class AdminController {
         // On supprime l'article.
         $articleManager = new ArticleManager();
         $articleManager->deleteArticle($id);
-       
+
         // On redirige vers la page d'administration.
         Utils::redirect("admin");
     }
 
     public function monitoring()
     {
-       
-
         // Vérifier que l'utilisateur est connecté 
         $this->checkIfUserIsConnected();
 
         //Appelle modèle Article
         // Récupération de sort et order : si on clique-> on recupere ce qu'on veut sinon on trie par date, du plus récent au plus ancien
         $sort = $_GET['sort'] ?? 'created_at';
-        $order = $_GET['order'] ?? 'desc'; 
+        $order = $_GET['order'] ?? 'desc';
 
         // SECURISATION des colonnes Autorisées
         $allowedSorts = ['title', 'created_at', 'views', 'nb_comments'];
-        if (!in_array($sort, $allowedSorts))
-        {
+        if (!in_array($sort, $allowedSorts)) {
             $sort = 'created_at';
         }
 
         $order = ($order === 'asc') ? 'asc' : 'desc';
 
-        
+
         $articleManager = new ArticleManager();
         $articles = $articleManager->getArticlesWithStats();
 
         // Trier le tableau en php, usort : compare deux articles, regarde la colonne demandée, les range dans le bon ordre 
-        usort($articles, function ($a, $b) use ($sort, $order)
-        {
-            if ($a[$sort] == $b[$sort])
-            {
+        usort($articles, function ($a, $b) use ($sort, $order) {
+            if ($a[$sort] == $b[$sort]) {
                 return 0;
             }
-            if($order === 'asc')
-            {
+            if ($order === 'asc') {
                 return ($a[$sort] < $b[$sort]) ? -1 : 1;
-            }else
-            {
+            } else {
                 return ($a[$sort] > $b[$sort]) ? -1 : 1;
             }
         });
 
-
-
-        // instance PDO 
-        //$pdo = new PDO("mysql:host=localhost;dbname=blog_forteroche", "root", "");
-        //$articleManager = new ArticleManager($pdo);
-        
         //Charger la vue monitoring 
         // render est une méthode de la classe View qui permet d'afficher une vue
         //monitoring est un fichier php != Monitoring qui est un nom, une étiquette, comme un titre
@@ -233,7 +221,34 @@ class AdminController {
             'sort' => $sort,
             'order' => $order
         ]);
-
     }
 
+    public function deleteComment(): void
+    {
+        // seuls les personnes connectées peuvent supprimer
+        $this->checkIfUserIsConneceted();
+        //On récupère l'ID du commentaire passé par l'URL
+        $id = Utils::request("id", -1);
+
+        if ($id > 0) {
+            $commentManager = new CommentManager();
+            $comment = $commentManager->getCommentById($id); // Pour récupérer l'objet
+            if ($comment) {
+                $commentManager->deleteComment($comment); // pour supprimer
+            }
+        }
+        // Retour à la page de monitoring ou commentaires
+        Utils::redirect("monitoring");
+    }
+
+
+
+    public function showComments(): void
+    {
+        $this->checkIfUserIsConnected();
+        $commentManager = new CommentManager();
+        $comments = $commentManager->getAllComments();
+        $view = new View("Commentaires");
+        $view->render('comments', ['comments' => $comments]);
+    }
 }

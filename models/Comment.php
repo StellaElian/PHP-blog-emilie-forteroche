@@ -4,19 +4,19 @@
  * Entité représentant un commentaire.
  * Avec les champs id, pseudo, content, et idArticle.
  */
- 
-class Comment extends AbstractEntity 
+
+class Comment extends AbstractEntity
 {
     private int $idArticle;
     private string $pseudo;
     private string $content;
     private DateTime $dateCreation;
-    
+
     /**
      * Getter pour l'id de l'article.
      * @return int
      */
-    public function getIdArticle(): int 
+    public function getIdArticle(): int
     {
         return $this->idArticle;
     }
@@ -26,16 +26,18 @@ class Comment extends AbstractEntity
      * @param int $idArticle
      * @return void
      */
-    public function setIdArticle(int $idArticle): void 
+    public function setIdArticle(int $idArticle): self
     {
         $this->idArticle = $idArticle;
+
+        return $this;
     }
 
     /**
      * Getter pour le pseudo.
      * @return string
      */
-    public function getPseudo(): string 
+    public function getPseudo(): string
     {
         return $this->pseudo;
     }
@@ -45,16 +47,18 @@ class Comment extends AbstractEntity
      * @param string $pseudo
      * @return void
      */
-    public function setPseudo(string $pseudo): void 
+    public function setPseudo(string $pseudo): self
     {
         $this->pseudo = $pseudo;
+
+        return $this;
     }
 
     /**
      * Getter pour le contenu.
      * @return string
      */
-    public function getContent(): string 
+    public function getContent(): string
     {
         return $this->content;
     }
@@ -64,16 +68,18 @@ class Comment extends AbstractEntity
      * @param string $content
      * @return void
      */
-    public function setContent(string $content): void 
+    public function setContent(string $content): self
     {
         $this->content = $content;
+
+        return $this;
     }
 
     /**
      * Getter pour la date de création.
      * @return DateTime
      */
-    public function getDateCreation(): DateTime 
+    public function getDateCreation(): DateTime
     {
         return $this->dateCreation;
     }
@@ -85,7 +91,7 @@ class Comment extends AbstractEntity
      * @param string $format : le format pour la convertion de la date si elle est une string.
      * Par défaut, c'est le format de date mysql qui est utilisé. 
      */
-    public function setDateCreation(string|DateTime $dateCreation, string $format = 'Y-m-d H:i:s') : void 
+    public function setDateCreation(string|DateTime $dateCreation, string $format = 'Y-m-d H:i:s'): void
     {
         if (is_string($dateCreation)) {
             $dateCreation = DateTime::createFromFormat($format, $dateCreation);

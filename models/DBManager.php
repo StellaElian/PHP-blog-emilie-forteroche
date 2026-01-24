@@ -4,17 +4,17 @@
  * Classe qui permet de se connecter à la base de données.
  * Singleton : une seule instance de connexion.
  */
-class DBManager 
+class DBManager
 {
     private static ?DBManager $instance = null;
     private PDO $db;
 
-    private function __construct() 
+    private function __construct()
     {
         try {
             $this->db = new PDO(
-                'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8', 
-                DB_USER, 
+                'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8',
+                DB_USER,
                 DB_PASS
             );
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
